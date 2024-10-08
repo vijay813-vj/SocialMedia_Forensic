@@ -1,0 +1,74 @@
+import requests
+import json
+
+# Set your SerpAPI key
+SERP_API_KEY = "SERP_API_KEY"  # Replace with your actual SerpAPI key
+
+def search_serpapi(query):
+    search_url = f"https://serpapi.com/search.json?q={query}&api_key={SERP_API_KEY}"
+    response = requests.get(search_url)
+    
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return {"error": response.json()}
+
+def filter_social_media_links(results):
+    social_media_links = {
+        "LinkedIn": [],
+        "Instagram": [],
+        "Twitter": [],
+        "Facebook": []
+    }
+    
+    for result in results.get('organic_results', []):
+        link = result.get('link', '')
+        if 'linkedin.com' in link:
+            social_media_links['LinkedIn'].append(link)
+        elif 'instagram.com' in link:
+            social_media_links['Instagram'].append(link)
+        elif 'twitter.com' in link:
+            social_media_links['Twitter'].append(link)
+        elif 'facebook.com' in link:
+            social_media_links['Facebook'].append(link)
+
+    return social_media_links
+
+def main():
+    query = input("Enter your search query: ")
+    results = search_serpapi(query)
+    
+    # Filter and store social media links in output
+    output = filter_social_media_links(results)
+    
+    return output  # Return the full output for further use
+
+# Run the main process
+if __name__ == "__main__":
+    output = main()  # Now output will contain the full dictionary of links
+
+api_key = 'cWcjE22IKzm_gbBXxer2ng'
+headers = {'Authorization': 'Bearer ' + api_key}
+api_endpoint = 'https://nubela.co/proxycurl/api/v2/linkedin'
+params = {
+    'linkedin_profile_url': output['LinkedIn'][0],
+    'first_name': 'include',
+    'last_name' : 'include',
+    'country': 'include',
+    'city': 'include',
+    'extra': 'include',
+    'linkedin_person_profile_url': 'include',
+    'github_profile_id': 'include',
+    'facebook_profile_id': 'include',
+    'twitter_profile_id': 'include',
+    'personal_contact_number': 'include',
+    'personal_email': 'include',
+    'role' : 'include',
+    'company_name': 'include',
+    'email': 'include'
+    
+}
+response = requests.get(api_endpoint,
+                        params=params,
+                        headers=headers)
+response.content
